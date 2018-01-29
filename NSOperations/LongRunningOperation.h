@@ -10,6 +10,6 @@
 
 @interface LongRunningOperation : NSOperation
 
-- (instancetype)initWithTimeInterval:(NSTimeInterval)timeInterval;
+@property (nonatomic, assign) NSTimeInterval timeInterval;
 
 @end

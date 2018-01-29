@@ -8,21 +8,7 @@
 
 #import "LongRunningOperation.h"
 
-@interface LongRunningOperation()
-
-@property (nonatomic, assign) NSTimeInterval timeInterval;
-
-@end
-
 @implementation LongRunningOperation
-
-- (instancetype)initWithTimeInterval:(NSTimeInterval)timeInterval
-{
-    if (self = [super init]) {
-        self.timeInterval = timeInterval;
-    }
-    return self;
-}
 
 - (void)main
 {

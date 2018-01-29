@@ -12,22 +12,32 @@
 
 @interface NSOperationsTests : XCTestCase
 
-@property (nonatomic, strong) NSOperationQueue *operationQueue;
-
 @end
 
 @implementation NSOperationsTests
 
-- (void)setUp
+- (void)testSynchronousOperation
 {
-    [super setUp];
-    self.operationQueue = [NSOperationQueue new];
+    LongRunningOperation *operation = [LongRunningOperation new];
+    operation.timeInterval = 10.0;
+    [operation start];
+    XCTAssertTrue(operation.isFinished);
 }
 
-- (void)testManualStarting
+- (void)testAsynchronousOperation
 {
-    LongRunningOperation *firstOperation = [[LongRunningOperation alloc] initWithTimeInterval:3.0];
-    LongRunningOperation *secondOperation = [[LongRunningOperation alloc] initWithTimeInterval:3.0];
+    AsyncLongRunningOperation *operation = [AsyncLongRunningOperation new];
+    operation.timeInterval = 10.0;
+    [operation start];
+    [operation waitUntilFinished];
+    XCTAssertTrue(operation.isFinished);
+}
+
+- (void)testDependencies
+{
+    LongRunningOperation *firstOperation = [LongRunningOperation new];
+    LongRunningOperation *secondOperation = [LongRunningOperation new];
+    firstOperation.timeInterval = 3.0;
     [secondOperation addDependency:firstOperation];
 
     XCTAssertTrue(firstOperation.isReady);
@@ -39,33 +49,36 @@
     XCTAssertTrue(secondOperation.isFinished);
 }
 
-- (void)testAsyncOperations
+- (void)testAsyncOperationsWithDependencies
 {
-    AsyncLongRunningOperation *firstOperation = [[AsyncLongRunningOperation alloc] initWithTimeInterval:3.0];
-    AsyncLongRunningOperation *secondOperation = [[AsyncLongRunningOperation alloc] initWithTimeInterval:3.0];
+    AsyncLongRunningOperation *firstOperation = [AsyncLongRunningOperation new];
+    AsyncLongRunningOperation *secondOperation = [AsyncLongRunningOperation new];
+    firstOperation.timeInterval = 3.0;
+    secondOperation.timeInterval = 3.0;
     [secondOperation addDependency:firstOperation];
 
     [firstOperation start];
     XCTAssertThrows([secondOperation start]);
     [firstOperation waitUntilFinished]; // Blocks the current thread until operation is finished
+
+    XCTKVOExpectation *executingExpectation = [[XCTKVOExpectation alloc] initWithKeyPath:@"isExecuting" object:secondOperation expectedValue:@YES];
     XCTAssertNoThrow([secondOperation start]);
+    XCTKVOExpectation *notExecutingExpectation = [[XCTKVOExpectation alloc] initWithKeyPath:@"isExecuting" object:secondOperation expectedValue:@NO];
+    XCTKVOExpectation *finishedExpectation = [[XCTKVOExpectation alloc] initWithKeyPath:@"isFinished" object:secondOperation expectedValue:@YES];
+    [self waitForExpectations:@[executingExpectation, notExecutingExpectation, finishedExpectation] timeout:10.0];
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
-}
-
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
-
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
+- (void)testAsyncOperationSuperclass
+{
+    NSOperationQueue *queue = [NSOperationQueue new];
+    AsyncOperation *operation1 = [AsyncOperation new];
+    AsyncOperation *operation2 = [AsyncOperation new];
+    [operation2 addDependency:operation1];
+    [queue addOperations:@[operation1, operation2] waitUntilFinished:YES];
+    XCTAssertFalse(operation1.isExecuting);
+    XCTAssertFalse(operation2.isExecuting);
+    XCTAssertTrue(operation1.isFinished);
+    XCTAssertTrue(operation2.isFinished);
 }
 
 @end

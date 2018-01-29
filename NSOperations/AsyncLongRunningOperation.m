@@ -8,16 +8,14 @@
 
 #import "AsyncLongRunningOperation.h"
 
-@interface AsyncLongRunningOperation()
-
-@property (assign) BOOL internalExecuting;
-@property (assign) BOOL internalFinished;
+@interface AsyncLongRunningOperation() {
+    BOOL _isExecuting;
+    BOOL _isFinished;
+}
 
 @end
 
 @implementation AsyncLongRunningOperation
-
-@synthesize executing, finished;
 
 - (BOOL)isAsynchronous
 {
@@ -26,24 +24,34 @@
 
 - (void)start
 {
-    NSAssert(self.isReady, @"Attempted to start %@ before it was ready...", NSStringFromClass(self.class));
-    self.internalExecuting = YES;
+    if (!self.isReady) {
+        [NSException raise:NSInternalInconsistencyException format:@"Attempt to start %@ before it was ready", NSStringFromClass(self.class)];
+    }
+    
+    [self willChangeValueForKey:@"isExecuting"];
+    _isExecuting = YES;
+    [self didChangeValueForKey:@"isExecuting"];
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [self main];
-        self.internalExecuting = NO;
-        self.internalFinished = YES;
+
+        [self willChangeValueForKey:@"isExecuting"];
+        [self willChangeValueForKey:@"isFinished"];
+        _isExecuting = NO;
+        _isFinished = YES;
+        [self didChangeValueForKey:@"isExecuting"];
+        [self didChangeValueForKey:@"isFinished"];
     });
 }
 
-+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key
+- (BOOL)isExecuting
 {
-    NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
-    if ([key isEqualToString:@"executing"] || [key isEqualToString:@"isExecuting"]) {
-        return [keyPaths setByAddingObject:@"internalExecuting"];
-    } else if ([key isEqualToString:@"finished"] || [key isEqualToString:@"isFinished"]) {
-        return [keyPaths setByAddingObject:@"internalFinished"];
-    }
-    return keyPaths;
+    return _isExecuting;
+}
+
+- (BOOL)isFinished
+{
+    return _isFinished;
 }
 
 @end
