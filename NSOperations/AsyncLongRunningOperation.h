@@ -8,6 +8,8 @@
 
 #import "LongRunningOperation.h"
 
-@interface AsyncLongRunningOperation : LongRunningOperation
+@interface AsyncLongRunningOperation : NSOperation
+
+@property (nonatomic, assign) NSTimeInterval timeInterval;
 
 @end

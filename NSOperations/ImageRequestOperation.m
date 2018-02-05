@@ -27,10 +27,12 @@
 - (void)main
 {
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    [[[NSURLSession sharedSession] dataTaskWithURL:self.URL completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+
+    [[[NSURLSession sharedSession] dataTaskWithURL:self.URL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         _image = [[UIImage alloc] initWithData:data];
         dispatch_semaphore_signal(semaphore);
     }] resume];
+
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 
     if (_simulatedDelay > 0.0) {

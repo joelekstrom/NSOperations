@@ -27,13 +27,13 @@
     if (!self.isReady) {
         [NSException raise:NSInternalInconsistencyException format:@"Attempt to start %@ before it was ready", NSStringFromClass(self.class)];
     }
-    
+
     [self willChangeValueForKey:@"isExecuting"];
     _isExecuting = YES;
     [self didChangeValueForKey:@"isExecuting"];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self main];
+    [[NSOperationQueue new] addOperationWithBlock:^{
+        [NSThread sleepForTimeInterval:self.timeInterval];
 
         [self willChangeValueForKey:@"isExecuting"];
         [self willChangeValueForKey:@"isFinished"];
@@ -41,7 +41,7 @@
         _isFinished = YES;
         [self didChangeValueForKey:@"isExecuting"];
         [self didChangeValueForKey:@"isFinished"];
-    });
+    }];
 }
 
 - (BOOL)isExecuting

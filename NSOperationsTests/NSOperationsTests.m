@@ -43,7 +43,7 @@
     XCTAssertTrue(firstOperation.isReady);
     XCTAssertFalse(secondOperation.isReady);
     XCTAssertThrows([secondOperation start]);
-    [firstOperation start]; // Will block until operation is done
+    [firstOperation start];
     XCTAssertTrue(secondOperation.isReady);
     XCTAssertNoThrow([secondOperation start]);
     XCTAssertTrue(secondOperation.isFinished);
