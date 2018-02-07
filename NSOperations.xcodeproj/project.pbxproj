@@ -31,6 +31,9 @@
 		5D58BFF320289F3D007E6F9C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D317CA42016A861008ABEF9 /* Assets.xcassets */; };
 		5D58BFF420289F49007E6F9C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D317CA62016A861008ABEF9 /* LaunchScreen.storyboard */; };
 		5D58BFF720289F66007E6F9C /* ImagePickerOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D58BFF620289F66007E6F9C /* ImagePickerOperation.m */; };
+		5D58BFFA20299483007E6F9C /* WrapperOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D58BFF920299483007E6F9C /* WrapperOperation.m */; };
+		5D58BFFD2029954E007E6F9C /* AsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D58BFFC2029954E007E6F9C /* AsyncOperation.m */; };
+		5D58C008202B11C8007E6F9C /* AsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D58BFFC2029954E007E6F9C /* AsyncOperation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +68,10 @@
 		5D58BFEB20289F14007E6F9C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D58BFF520289F66007E6F9C /* ImagePickerOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImagePickerOperation.h; sourceTree = "<group>"; };
 		5D58BFF620289F66007E6F9C /* ImagePickerOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagePickerOperation.m; sourceTree = "<group>"; };
+		5D58BFF820299483007E6F9C /* WrapperOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WrapperOperation.h; sourceTree = "<group>"; };
+		5D58BFF920299483007E6F9C /* WrapperOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WrapperOperation.m; sourceTree = "<group>"; };
+		5D58BFFB2029954E007E6F9C /* AsyncOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncOperation.h; sourceTree = "<group>"; };
+		5D58BFFC2029954E007E6F9C /* AsyncOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AsyncOperation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,6 +173,10 @@
 				5D317CC42016AC46008ABEF9 /* AsyncLongRunningOperation.m */,
 				5D0AD66E201F035600C3C890 /* ImageRequestOperation.h */,
 				5D0AD66F201F035600C3C890 /* ImageRequestOperation.m */,
+				5D58BFF820299483007E6F9C /* WrapperOperation.h */,
+				5D58BFF920299483007E6F9C /* WrapperOperation.m */,
+				5D58BFFB2029954E007E6F9C /* AsyncOperation.h */,
+				5D58BFFC2029954E007E6F9C /* AsyncOperation.m */,
 			);
 			path = NSOperations;
 			sourceTree = "<group>";
@@ -381,6 +392,8 @@
 				5D317CC62016AD0B008ABEF9 /* AsyncLongRunningOperation.m in Sources */,
 				5D317CB52016A861008ABEF9 /* NSOperationsTests.m in Sources */,
 				5D317CC22016A9C1008ABEF9 /* LongRunningOperation.m in Sources */,
+				5D58BFFD2029954E007E6F9C /* AsyncOperation.m in Sources */,
+				5D58BFFA20299483007E6F9C /* WrapperOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,6 +404,7 @@
 				5D58BFF120289F37007E6F9C /* main.m in Sources */,
 				5D58BFE220289F14007E6F9C /* ViewController.m in Sources */,
 				5D58BFF720289F66007E6F9C /* ImagePickerOperation.m in Sources */,
+				5D58C008202B11C8007E6F9C /* AsyncOperation.m in Sources */,
 				5D58BFF220289F3A007E6F9C /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

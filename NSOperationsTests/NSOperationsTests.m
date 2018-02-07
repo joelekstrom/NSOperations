@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "LongRunningOperation.h"
 #import "AsyncLongRunningOperation.h"
+#import "AsyncOperation.h"
 
 @interface NSOperationsTests : XCTestCase
 
