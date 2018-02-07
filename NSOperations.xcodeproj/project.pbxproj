@@ -34,6 +34,7 @@
 		5D58BFFA20299483007E6F9C /* WrapperOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D58BFF920299483007E6F9C /* WrapperOperation.m */; };
 		5D58BFFD2029954E007E6F9C /* AsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D58BFFC2029954E007E6F9C /* AsyncOperation.m */; };
 		5D58C008202B11C8007E6F9C /* AsyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D58BFFC2029954E007E6F9C /* AsyncOperation.m */; };
+		5D58C00B202B4FCE007E6F9C /* TransitionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D58C00A202B4FCE007E6F9C /* TransitionOperation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +73,8 @@
 		5D58BFF920299483007E6F9C /* WrapperOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WrapperOperation.m; sourceTree = "<group>"; };
 		5D58BFFB2029954E007E6F9C /* AsyncOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncOperation.h; sourceTree = "<group>"; };
 		5D58BFFC2029954E007E6F9C /* AsyncOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AsyncOperation.m; sourceTree = "<group>"; };
+		5D58C009202B4FCE007E6F9C /* TransitionOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransitionOperation.h; sourceTree = "<group>"; };
+		5D58C00A202B4FCE007E6F9C /* TransitionOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TransitionOperation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +180,8 @@
 				5D58BFF920299483007E6F9C /* WrapperOperation.m */,
 				5D58BFFB2029954E007E6F9C /* AsyncOperation.h */,
 				5D58BFFC2029954E007E6F9C /* AsyncOperation.m */,
+				5D58C009202B4FCE007E6F9C /* TransitionOperation.h */,
+				5D58C00A202B4FCE007E6F9C /* TransitionOperation.m */,
 			);
 			path = NSOperations;
 			sourceTree = "<group>";
@@ -391,6 +396,7 @@
 			files = (
 				5D317CC62016AD0B008ABEF9 /* AsyncLongRunningOperation.m in Sources */,
 				5D317CB52016A861008ABEF9 /* NSOperationsTests.m in Sources */,
+				5D58C00B202B4FCE007E6F9C /* TransitionOperation.m in Sources */,
 				5D317CC22016A9C1008ABEF9 /* LongRunningOperation.m in Sources */,
 				5D58BFFD2029954E007E6F9C /* AsyncOperation.m in Sources */,
 				5D58BFFA20299483007E6F9C /* WrapperOperation.m in Sources */,
