@@ -1,0 +1,82 @@
+#+OPTIONS: num:nil reveal_title_slide:nil
+#+REVEAL_TRANS: slide
+
+* NSOperations
+Why you should use them for everything, and how to not shoot yourself in the foot while doing so
+* Possible uses of NSOperation
+#+ATTR_REVEAL: :frag (roll-in)
+- Multithreading/background tasks
+- Dependency management
+- User flows/tasks
+- Extracting/grouping complex functions
+- Wrap API's requiring delegate callbacks into a simple object
+* Examples backed by NSOperations
+* What is an NSOperation?
+#+ATTR_REVEAL: :frag (roll-in)
+- An object which performs a task, not unlike a block
+- A "program" with a main function
+** Example
+- Let's create a simple NSOperation!
+** Gotcha #1 - Synchronous vs asynchronous operations
+- Has nothing to do with operations running concurrently
+*** Synchronous operations
+- Have a main-function, ~- (void)main~
+- After main is finished, the operation is considered finished
+- Are very simple to implement
+*** Asynchronous operations
+- Must override ~- (void)start~
+- Creates their own threads (or uses asynchronous API's)
+- Must track and update ~isExecuting~ and ~isFinished~ via key-value observing
+- Are very hard to get right
+*** Examples - Tests: sync/async/dependencies
+*** Conclusion
+- Always, always try to make synchronous operations
+- You can make asynchronous API's synchronous with semaphores
+- Example: ImageRequestOperation
+* NSOperationQueue
+#+ATTR_REVEAL: :frag (roll-in)
+- Manages starting operations for you when their dependencies finish
+- Manages concurrency by running all ready operations simultaneously
+- Is _not_ a serial queue. Operations will run concurrently (unless ~maxConcurrentOperationCount == 1~)
+- Is similar to the lower level ~dispatch_queue_t~
+** 
+NSOperationQueue with ~maxConcurrentOperationCount = 4~
+[[./operationqueue.png]]
+** The thread confusion
+#+ATTR_REVEAL: :frag (roll-in)
+- ~NSOperationQueue~ != thread. Always assume that each NSOperation runs on its own thread, even in serial queues
+- The only exception is ~[NSOperationQueue mainQueue]~
+** Gotcha #2 - ~completionBlock~
+- Runs at the same time as the next operation
+- Cannot be used to configure any dependent operations
+- Let the dependent operation know about its dependencies, or create it in the completion block
+** Examples - Example1 and Example2 in detail
+** Conclusion
+- Always run your operations on an NSOperationQueue instead of starting manually
+* Cancel
+#+ATTR_REVEAL: :frag (roll-in)
+- Only thing NSOperation does for you is set the property (and send KVO notifications)
+- Use cancel to cancel network tasks, or abort heavy tasks. Check periodically
+- Can also be used to indicate that a UI operation was cancelled
+- Operation will still run, and must reach finished state
+* Wrapping UI flows
+** Example3 in detail
+#+ATTR_REVEAL: :frag (roll-in)
+** Gotcha #3 - Long running async operations on the main queue
+- Prefer running UI operations on background thread, but dispatch to main thread
+- Other main queue operations will be blocked until long running operation finishes
+* Wrapping several operations into larger operations
+#+ATTR_REVEAL: :frag (roll-in)
+- Totally encouraged!
+- Each operation creates its own operation queue
+- Operation queues are lightweight, use them!
+- Finish when all wrapped operations are finished
+- Example: WrapperOperation
+* Refactoring large functions into operations
+#+ATTR_REVEAL: :frag (roll-in)
+- Use default arguments
+- Example: TransitionOperation
+* Tips
+#+ATTR_REVEAL: :frag (roll-in)
+- Take dependencies as parameters when initializing your operations
+- Add a main queue completion block-setter

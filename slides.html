@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title></title>
+<meta name="author" content="(Joel Ekström)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/moon.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="table-of-contents">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#/slide-org0124118">NSOperations</a></li>
+<li><a href="#/slide-org49d22a6">Possible uses of NSOperation</a></li>
+<li><a href="#/slide-orge0b09cf">Examples backed by NSOperations</a></li>
+<li><a href="#/slide-orge8539f5">What is an NSOperation?</a>
+<ul>
+<li><a href="#/slide-orgc37cecc">Example</a></li>
+<li><a href="#/slide-org083f62f">Gotcha #1 - Synchronous vs asynchronous operations</a>
+<ul>
+<li><a href="#/slide-orgd8aebbc">Synchronous operations</a></li>
+<li><a href="#/slide-orgae74b17">Asynchronous operations</a></li>
+<li><a href="#/slide-org5af4ff6">Examples - Tests: sync/async/dependencies</a></li>
+<li><a href="#/slide-org5743d10">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#/slide-orga1b5787">NSOperationQueue</a>
+<ul>
+<li><a href="#/slide-orgc65a1e7"></a></li>
+<li><a href="#/slide-org9e136b2">The thread confusion</a></li>
+<li><a href="#/slide-org3c08bc1">Gotcha #2 - <code>completionBlock</code></a></li>
+<li><a href="#/slide-org6d592d5">Examples - Example1 and Example2 in detail</a></li>
+<li><a href="#/slide-org9257d29">Conclusion</a></li>
+</ul>
+</li>
+<li><a href="#/slide-org3ecde41">Cancel</a></li>
+<li><a href="#/slide-org8442456">Wrapping UI flows</a>
+<ul>
+<li><a href="#/slide-org6ffa805">Example3 in detail</a></li>
+<li><a href="#/slide-orgcc530a2">Gotcha #3 - Long running async operations on the main queue</a></li>
+</ul>
+</li>
+<li><a href="#/slide-org4bb50f7">Wrapping several operations into larger operations</a></li>
+<li><a href="#/slide-orgad0b0ae">Refactoring large functions into operations</a></li>
+<li><a href="#/slide-org37331dd">Tips</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-org0124118">
+<h2 id="org0124118">NSOperations</h2>
+<p>
+Why you should use them for everything, and how to not shoot yourself in the foot while doing so
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org49d22a6">
+<h2 id="org49d22a6">Possible uses of NSOperation</h2>
+<ul>
+<li class="fragment roll-in">Multithreading/background tasks</li>
+<li class="fragment roll-in">Dependency management</li>
+<li class="fragment roll-in">User flows/tasks</li>
+<li class="fragment roll-in">Extracting/grouping complex functions</li>
+<li class="fragment roll-in">Wrap API's requiring delegate callbacks into a simple object</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orge0b09cf">
+<h2 id="orge0b09cf">Examples backed by NSOperations</h2>
+</section>
+</section>
+<section>
+<section id="slide-orge8539f5">
+<h2 id="orge8539f5">What is an NSOperation?</h2>
+<ul>
+<li class="fragment roll-in">An object which performs a task, not unlike a block</li>
+<li class="fragment roll-in">A "program" with a main function</li>
+
+</ul>
+</section>
+<section id="slide-orgc37cecc">
+<h3 id="orgc37cecc">Example</h3>
+<ul>
+<li>Let's create a simple NSOperation!</li>
+
+</ul>
+</section>
+<section id="slide-org083f62f">
+<h3 id="org083f62f">Gotcha #1 - Synchronous vs asynchronous operations</h3>
+<ul>
+<li>Has nothing to do with operations running concurrently</li>
+
+</ul>
+</section>
+<section id="slide-orgd8aebbc">
+<h4 id="orgd8aebbc">Synchronous operations</h4>
+<ul>
+<li>Have a main-function, <code>- (void)main</code></li>
+<li>After main is finished, the operation is considered finished</li>
+<li>Are very simple to implement</li>
+
+</ul>
+</section>
+<section id="slide-orgae74b17">
+<h4 id="orgae74b17">Asynchronous operations</h4>
+<ul>
+<li>Must override <code>- (void)start</code></li>
+<li>Creates their own threads (or uses asynchronous API's)</li>
+<li>Must track and update <code>isExecuting</code> and <code>isFinished</code> via key-value observing</li>
+<li>Are very hard to get right</li>
+
+</ul>
+</section>
+<section id="slide-org5af4ff6">
+<h4 id="org5af4ff6">Examples - Tests: sync/async/dependencies</h4>
+</section>
+<section id="slide-org5743d10">
+<h4 id="org5743d10">Conclusion</h4>
+<ul>
+<li>Always, always try to make synchronous operations</li>
+<li>You can make asynchronous API's synchronous with semaphores</li>
+<li>Example: ImageRequestOperation</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orga1b5787">
+<h2 id="orga1b5787">NSOperationQueue</h2>
+<ul>
+<li class="fragment roll-in">Manages starting operations for you when their dependencies finish</li>
+<li class="fragment roll-in">Manages concurrency by running all ready operations simultaneously</li>
+<li class="fragment roll-in">Is <span class="underline">not</span> a serial queue. Operations will run concurrently (unless <code>maxConcurrentOperationCount == 1</code>)</li>
+<li class="fragment roll-in">Is similar to the lower level <code>dispatch_queue_t</code></li>
+
+</ul>
+</section>
+<section id="slide-orgc65a1e7">
+<h3 id="orgc65a1e7"></h3>
+<p>
+NSOperationQueue with <code>maxConcurrentOperationCount = 4</code>
+<img src="./operationqueue.png" alt="operationqueue.png" />
+</p>
+</section>
+<section id="slide-org9e136b2">
+<h3 id="org9e136b2">The thread confusion</h3>
+<ul>
+<li class="fragment roll-in"><code>NSOperationQueue</code> != thread. Always assume that each NSOperation runs on its own thread, even in serial queues</li>
+<li class="fragment roll-in">The only exception is <code>[NSOperationQueue mainQueue]</code></li>
+
+</ul>
+</section>
+<section id="slide-org3c08bc1">
+<h3 id="org3c08bc1">Gotcha #2 - <code>completionBlock</code></h3>
+<ul>
+<li>Runs at the same time as the next operation</li>
+<li>Cannot be used to configure any dependent operations</li>
+<li>Let the dependent operation know about its dependencies, or create it in the completion block</li>
+
+</ul>
+</section>
+<section id="slide-org6d592d5">
+<h3 id="org6d592d5">Examples - Example1 and Example2 in detail</h3>
+</section>
+<section id="slide-org9257d29">
+<h3 id="org9257d29">Conclusion</h3>
+<ul>
+<li>Always run your operations on an NSOperationQueue instead of starting manually</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org3ecde41">
+<h2 id="org3ecde41">Cancel</h2>
+<ul>
+<li class="fragment roll-in">Only thing NSOperation does for you is set the property (and send KVO notifications)</li>
+<li class="fragment roll-in">Use cancel to cancel network tasks, or abort heavy tasks. Check periodically</li>
+<li class="fragment roll-in">Can also be used to indicate that a UI operation was cancelled</li>
+<li class="fragment roll-in">Operation will still run, and must reach finished state</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org8442456">
+<h2 id="org8442456">Wrapping UI flows</h2>
+<div class="outline-text-2" id="text-org8442456">
+</div>
+</section>
+<section id="slide-org6ffa805">
+<h3 id="org6ffa805">Example3 in detail</h3>
+</section>
+<section id="slide-orgcc530a2">
+<h3 id="orgcc530a2">Gotcha #3 - Long running async operations on the main queue</h3>
+<ul>
+<li>Prefer running UI operations on background thread, but dispatch to main thread</li>
+<li>Other main queue operations will be blocked until long running operation finishes</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org4bb50f7">
+<h2 id="org4bb50f7">Wrapping several operations into larger operations</h2>
+<ul>
+<li class="fragment roll-in">Totally encouraged!</li>
+<li class="fragment roll-in">Each operation creates its own operation queue</li>
+<li class="fragment roll-in">Operation queues are lightweight, use them!</li>
+<li class="fragment roll-in">Finish when all wrapped operations are finished</li>
+<li class="fragment roll-in">Example: WrapperOperation</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgad0b0ae">
+<h2 id="orgad0b0ae">Refactoring large functions into operations</h2>
+<ul>
+<li class="fragment roll-in">Use default arguments</li>
+<li class="fragment roll-in">Example: TransitionOperation</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org37331dd">
+<h2 id="org37331dd">Tips</h2>
+<ul>
+<li class="fragment roll-in">Take dependencies as parameters when initializing your operations</li>
+<li class="fragment roll-in">Add a main queue completion block-setter</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'slide', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>
