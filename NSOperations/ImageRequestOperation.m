@@ -11,6 +11,7 @@
 @interface ImageRequestOperation()
 
 @property (nonatomic, strong) NSURL *URL;
+@property (nonatomic, strong) NSURLSessionDataTask *task;
 
 @end
 
@@ -26,18 +27,32 @@
 
 - (void)main
 {
+    if (self.isCancelled) {
+        return;
+    }
+
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
 
-    [[[NSURLSession sharedSession] dataTaskWithURL:self.URL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        _image = [[UIImage alloc] initWithData:data];
+    self.task = [[NSURLSession sharedSession] dataTaskWithURL:self.URL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (!self.isCancelled) {
+            _image = [[UIImage alloc] initWithData:data];
+        }
         dispatch_semaphore_signal(semaphore);
-    }] resume];
+    }];
+
+    [self.task resume];
 
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 
     if (_simulatedDelay > 0.0) {
         [NSThread sleepForTimeInterval:_simulatedDelay];
     }
+}
+
+- (void)cancel
+{
+    [super cancel];
+    [self.task cancel];
 }
 
 @end
