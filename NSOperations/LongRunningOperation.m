@@ -15,4 +15,11 @@
     [NSThread sleepForTimeInterval:self.timeInterval];
 }
 
+- (void)setMainThreadCompletionBlock:(void (^)(void))completionBlock
+{
+    [self setCompletionBlock:^{
+        dispatch_async(dispatch_get_main_queue(), completionBlock);
+    }];
+}
+
 @end

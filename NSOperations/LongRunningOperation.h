@@ -12,4 +12,6 @@
 
 @property (nonatomic, assign) NSTimeInterval timeInterval;
 
+- (void)setMainThreadCompletionBlock:(void (^)(void))completionBlock;
+
 @end
